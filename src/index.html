@@ -12,16 +12,13 @@
 	<!-- States -->
 	<script src = "states/consts.js"></script>
 	<script src = "states/boot.js"></script>
+	<script src = "states/preload.js"></script>
 	<script src = "states/game.js"></script>
 
 </head>
 <body>
-	<div id = "game_div"></div>
 	<script type = "text/javascript">
-		window.onload = function()
-		{
-			Core.onload( "game_div" )
-		}
+		window.onload = Core.onload.bind( Core )
 	</script>
 </body>
 </html>

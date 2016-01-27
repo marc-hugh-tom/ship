@@ -1,40 +1,65 @@
 Core =
 {
-	states : {},
-	startingState : null,
+	__states : {},
+	__startingState : null,
 
-	game : null,
+	__game : null,
 
 	addState : function( name, state, start )
 	{
-		this.states[ name ] = state
+		this.__states[ name ] = state
 
 		if ( start !== null && start )
 		{
-			this.startingState = name
+			this.__startingState = name
 		}
+	},
+
+	getState : function( name )
+	{
+		return this.__states[ name ].prototype;
 	},
 
 	startState : function( name )
 	{
-		this.game.state.start( name );
+		this.__game.state.start( name );
 	},
 
-	onload : function( divName )
+	onload : function()
 	{
 		// Create game
-		this.game = new Phaser.Game( 800, 600, Phaser.AUTO, divName );
+		this.__game = new Phaser.Game( 800, 600 );
 
-		// Add states
-		Object.keys( this.states ).forEach( function( stateName )
+		this.__add_states();
+		this.__init_states();
+		this.__startFirstState();
+	},
+
+	__add_states : function()
+	{
+		Object.keys( this.__states ).forEach( function( stateName )
 		{
-			this.game.state.add( stateName, this.states[ stateName ] );
+			this.__game.state.add( stateName, this.__states[ stateName ] );
 		}.bind( this ));
+	},
 
-		// Start the first state
-		if ( this.startingState )
+	__init_states : function()
+	{
+		Object.keys( this.__states ).forEach( function( stateName )
 		{
-			this.startState( this.startingState );
+			var onload = this.__states[ stateName ].prototype.onload
+			if ( onload )
+			{
+				onload.apply( this.__states[ stateName ].prototype )
+			}
+		}.bind( this ));
+	},
+
+	__startFirstState : function()
+	{
+		if ( this.__startingState )
+		{
+			this.startState( this.__startingState );
 		}
 	}
 };
