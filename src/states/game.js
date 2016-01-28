@@ -26,7 +26,7 @@ Game.prototype =
 	create : function()
 	{
         this.__sprites.ship = this.game.add.sprite(
-        	100, 300, this.__assets.ship.name );
+        	100, 200, this.__assets.ship.name );
         this.__sprites.ship.anchor.set( 0.5, 0.5 );
 
         this.__sprites.blackHole = this.game.add.sprite(
@@ -37,25 +37,25 @@ Game.prototype =
         this.game.physics.enable(this.__sprites.ship, Phaser.Physics.ARCADE);
         this.game.physics.enable(this.__sprites.blackHole, Phaser.Physics.ARCADE);
 
-        // this.__sprites.ship.body.mass = 100000;
-        // this.__sprites.blackHole.body.mass = 1;
+        this.__sprites.ship.body.velocity.setTo(60, 0);
+        
+        this.__sprites.ship.body.mass = 500000;
+        this.__sprites.blackHole.body.mass = 1;
 	},
 
 	update : function()
 	{
 		var ship = this.__sprites.ship;
-		var blackHole = this.__sprites.blackHole
-
-		var angle = this.game.physics.arcade.angleBetween(ship, blackHole)
+		var blackHole = this.__sprites.blackHole;
 		
-                var vel = 100
-		ship.body.velocity.setTo( +vel*Math.sin(ship.rotation), -vel*Math.cos(ship.rotation) );
-                var velocity = 50 - this.game.time.totalElapsedSeconds();
-                if (velocity < 0) {velocity = 0}
-                ship.body.angularVelocity = velocity;
+		var totalGravity = (ship.body.mass * blackHole.body.mass) / Phaser.Math.distanceSq(ship.x, ship.y, blackHole.x, blackHole.y);
+                
+                var angleBetweenShipBH = Phaser.Math.angleBetweenPoints(ship.position, blackHole.position)
+                
+                ship.body.gravity = new Phaser.Point(totalGravity*Math.cos(angleBetweenShipBH), totalGravity*Math.sin(angleBetweenShipBH));
 
-		// this.game.physics.arcade.accelerateToObject(
-		// 	ship, blackHole, ( ship.body.mass ) / r );
+                ship.body.rotation = 270 + Phaser.Math.radToDeg(Phaser.Math.angleBetweenPoints(ship.body.velocity, new Phaser.Point(0, 0)));
+                
 	}
 };
 
