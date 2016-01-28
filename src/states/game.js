@@ -56,6 +56,11 @@ Game.prototype =
 
                 ship.body.rotation = 270 + Phaser.Math.radToDeg(Phaser.Math.angleBetweenPoints(ship.body.velocity, new Phaser.Point(0, 0)));
                 
+                console.log(this.input.activePointer.leftButton.isDown);
+                
+                if (this.input.activePointer.leftButton.isDown) {
+                    blackHole.position = new Phaser.Point(this.input.mousePointer.position.x, this.input.mousePointer.position.y);
+                }
 	}
 };
 
