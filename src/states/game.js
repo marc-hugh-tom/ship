@@ -25,22 +25,25 @@ Game.prototype =
 
 	create : function()
 	{
-        this.__sprites.ship = this.game.add.sprite(
-        	100, 200, this.__assets.ship.name );
-        this.__sprites.ship.anchor.set( 0.5, 0.5 );
+            this.__sprites.ship = this.game.add.sprite(
+                    100, 200, this.__assets.ship.name );
+            this.__sprites.ship.anchor.set( 0.5, 0.5 );
 
-        this.__sprites.blackHole = this.game.add.sprite(
-        	200, 300, this.__assets.blackHole.name );
-        this.__sprites.blackHole.anchor.set( 0.5, 0.5 );
+            this.__sprites.blackHole = this.game.add.sprite(
+                    200, 300, this.__assets.blackHole.name );
+            this.__sprites.blackHole.anchor.set( 0.5, 0.5 );
 
-        this.game.physics.startSystem(Phaser.Physics.ARCADE);
-        this.game.physics.enable(this.__sprites.ship, Phaser.Physics.ARCADE);
-        this.game.physics.enable(this.__sprites.blackHole, Phaser.Physics.ARCADE);
+            this.game.physics.startSystem(Phaser.Physics.ARCADE);
+            this.game.physics.enable(this.__sprites.ship, Phaser.Physics.ARCADE);
+            this.game.physics.enable(this.__sprites.blackHole, Phaser.Physics.ARCADE);
 
-        this.__sprites.ship.body.velocity.setTo(60, 0);
-        
-        this.__sprites.ship.body.mass = 500000;
-        this.__sprites.blackHole.body.mass = 1;
+            this.__sprites.ship.body.velocity.setTo(60, 0);
+            
+            this.__sprites.ship.body.mass = 500000;
+            this.__sprites.blackHole.body.mass = 1;
+            
+            this.world.setBounds(0, 0, 2000, 600);
+            this.camera.follow(this.__sprites.ship, Phaser.Camera.FOLLOW_PLATFORMER);
 	},
 
 	update : function()
@@ -56,10 +59,8 @@ Game.prototype =
 
                 ship.body.rotation = 270 + Phaser.Math.radToDeg(Phaser.Math.angleBetweenPoints(ship.body.velocity, new Phaser.Point(0, 0)));
                 
-                console.log(this.input.activePointer.leftButton.isDown);
-                
                 if (this.input.activePointer.leftButton.isDown) {
-                    blackHole.position = new Phaser.Point(this.input.mousePointer.position.x, this.input.mousePointer.position.y);
+                    blackHole.position = new Phaser.Point(this.camera.x + this.input.mousePointer.position.x, this.camera.y + this.input.mousePointer.position.y);
                 }
 	}
 };
