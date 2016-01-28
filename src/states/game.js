@@ -46,10 +46,13 @@ Game.prototype =
 		var ship = this.__sprites.ship;
 		var blackHole = this.__sprites.blackHole
 
-		ship.body.acceleration.setTo( 0, 0 );
-		var dx = ship.x - blackHole.x;
-		var dy = ship.y - blackHole.y;
-		var r = dx * dx + dy * dy;
+		var angle = this.game.physics.arcade.angleBetween(ship, blackHole)
+		
+                var vel = 100
+		ship.body.velocity.setTo( +vel*Math.sin(ship.rotation), -vel*Math.cos(ship.rotation) );
+                var velocity = 50 - this.game.time.totalElapsedSeconds();
+                if (velocity < 0) {velocity = 0}
+                ship.body.angularVelocity = velocity;
 
 		// this.game.physics.arcade.accelerateToObject(
 		// 	ship, blackHole, ( ship.body.mass ) / r );
