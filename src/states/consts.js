@@ -1,6 +1,6 @@
 STATE_NAME =
-{
-	BOOT : "boot",
-	PRELOAD : "preload",
-	GAME : "game"
-};
+	{
+		BOOT : "boot",
+		PRELOAD : "preload",
+		GAME : "game"
+	};

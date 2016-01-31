@@ -50,9 +50,6 @@ Game.prototype =
 			var dx = ship.x - blackHole.x;
 			var dy = ship.y - blackHole.y;
 			var r = dx * dx + dy * dy;
-			
-
-			
 
 			
 		}
