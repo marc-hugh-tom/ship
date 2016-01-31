@@ -1,0 +1,17 @@
+An endless runner where you are trying to navigate a rocket ship as far as possible.
+
+Clicking the screen creates a black hole for the duration of the click.
+
+The force of the black hole on the ship is the only way of controlling its trajectory.
+
+Black holes do not affect any other objects. Maybe instead of a gravitational pull it’s a magnetic pull. Potentially an interesting obstacle at harder difficulties would be asteroids which were affected by the pull of the black holes.
+
+Obstacles could be other ships, asteroids, aliens.
+
+The rocket has a set speed, which can be altered by creating a black hole behind it or in front of it. Could have some obstacles which require changing the rocket’s speed to pass.
+
+At each frame, the resultant force on the rocket will be calculated, and the rocket will point in the direction of that resultant force.
+
+Could have different training levels to introduce certain obstacles. Normal asteroids, metal asteroids, aliens for example.
+
+Have a single challenge mode which combines all the obstacles at once. Have the distance traveled as the score metric for high score tables.
