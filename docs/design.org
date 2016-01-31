@@ -1,3 +1,6 @@
+* Design Document
+
+** Summary
 An endless runner where you are trying to navigate a rocket ship as far as possible.
 
 Clicking the screen creates a black hole for the duration of the click.
@@ -15,3 +18,24 @@ At each frame, the resultant force on the rocket will be calculated, and the roc
 Could have different training levels to introduce certain obstacles. Normal asteroids, metal asteroids, aliens for example.
 
 Have a single challenge mode which combines all the obstacles at once. Have the distance traveled as the score metric for high score tables.
+
+** Basic prototype
+*** Components
+- Main menu
+  - Some sort of title screen + play button
+- Main game
+  - Ship
+  - Black hole
+  - Obsticles
+- Game over scren
+
+*** Behaviour
+- Ship thrusts forward
+- Player can place a single black hole by clicking anywhere on the screen
+- Black holes pull the ship towards them
+- Player gains points the longer they survive
+- Player dies if they collide with:
+  - Asteroids
+  - The black hole
+- The game world is infinite in all directions
+- Asteroids move into the player's view randomly from all directions
