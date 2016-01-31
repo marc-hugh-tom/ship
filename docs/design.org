@@ -26,11 +26,11 @@ Have a single challenge mode which combines all the obstacles at once. Have the 
 - Main game
   - Ship
   - Black hole
-  - Obsticles
-- Game over scren
+  - Obstacles
+- Game over screen
 
 *** Behaviour
-- Ship thrusts forward
+- Ship thrusts forward relative to the ship's orientation
 - Player can place a single black hole by clicking anywhere on the screen
 - Black holes pull the ship towards them
 - Player gains points the further they travel to the right of the screen
@@ -40,4 +40,20 @@ Have a single challenge mode which combines all the obstacles at once. Have the 
   - The top, bottom or left of the screen
 - The game world is infinite in the horizontal direction and limited to the screen size in the vertical direction
 - To advance the rocket the player needs to travel to the right of the screen
-- Asteroids move into the player's view randomly from all directions
+- The player encounters asteroids as they fly through the level
+- Asteroids have a small amount of random movement velocity and angular velocity
+
+** Possible Enhancements
+This section is just random thoughts for enhancements to the basic prototype
+- Parallax scrolling star field in the background
+- Move movement from asteroids
+  - Flying in from the top/bottom?
+  - Flying at the player in 'hard mode'?
+- Top/bottom of the screen could be a dense, unpassable asteroid field
+- Maze game mode:
+  - The player must navigate an asteroid field that changes direction as the level progresses
+  - i.e. instead of only flying in one direction, it could switch during the level?
+- Wander mode:
+  - Not bound by 1 direction, player can move freely
+- Cool black hole creation graphics
+  - Pretty sure we could use some shaders to warp the surrounding graphics
