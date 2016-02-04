@@ -40,6 +40,8 @@ Game.prototype =
 
     create : function()
     {
+        this.__origin = new Phaser.Point(0, 0);
+        
         this.__sprites.ship = this.game.add.sprite(
                 100, 200, this.__assets.ship.name );
         this.__sprites.ship.anchor.set( 0.5, 0.5 );
@@ -70,18 +72,16 @@ Game.prototype =
             Phaser.Math.distanceSq(ship.x, ship.y, blackHole.x, blackHole.y);
         
         var angleBetweenShipBH = Phaser.Math.angleBetweenPoints(ship.position,
-            blackHole.position)
+            blackHole.position);
         
-        ship.body.gravity = new Phaser.Point(totalGravity *
-            Math.cos(angleBetweenShipBH), totalGravity *
-            Math.sin(angleBetweenShipBH));
+        ship.body.gravity.setTo(totalGravity * Math.cos(angleBetweenShipBH),
+                                totalGravity * Math.sin(angleBetweenShipBH));
 
         ship.body.rotation = 270 + Phaser.Math.radToDeg(
-            Phaser.Math.angleBetweenPoints(ship.body.velocity,
-                                           new Phaser.Point(0, 0)));
+            Phaser.Math.angleBetweenPoints(ship.body.velocity, this.__origin));
         
         if (this.input.activePointer.leftButton.isDown) {
-            blackHole.position = new Phaser.Point(
+            blackHole.position.setTo(
                 this.camera.x + this.input.mousePointer.position.x,
                 this.camera.y + this.input.mousePointer.position.y);
         }

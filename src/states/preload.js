@@ -25,4 +25,4 @@ Preload.prototype =
 	}
 };
 
-Core.addState( STATE_NAME.PRELOAD, Preload )
+Core.addState( STATE_NAME.PRELOAD, Preload );

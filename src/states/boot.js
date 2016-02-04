@@ -12,4 +12,4 @@ Boot.prototype =
 	}
 };
 
-Core.addState( STATE_NAME.BOOT, Boot, true )
+Core.addState( STATE_NAME.BOOT, Boot, true );
