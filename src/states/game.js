@@ -2,6 +2,13 @@ var Game = function( game )
 {
 };
 
+WebFontConfig = {
+    google: {
+      families: ['Roboto Mono']
+    }
+};
+
+
 Game.prototype =
 {
     __assets :
@@ -24,9 +31,20 @@ Game.prototype =
     {
         ship_mass: 1,
         blackHole_mass: 500000,
-        camera_cutoff_x: 500
+        camera_cutoff_x: 500,
+        start_position: {
+            x: 100,
+            y: 300
+        },
+        score_constant: 0.05
     },
 
+    preload : function()
+    {
+        this.load.script('webfont',
+            '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+    },
+    
     onload : function()
     {
         preloadState = Core.getState( STATE_NAME.PRELOAD );
@@ -43,11 +61,12 @@ Game.prototype =
         this.__origin = new Phaser.Point(0, 0);
         
         this.__sprites.ship = this.game.add.sprite(
-                100, 200, this.__assets.ship.name );
+                this.__parameters.start_position.x,
+                this.__parameters.start_position.y, this.__assets.ship.name );
         this.__sprites.ship.anchor.set( 0.5, 0.5 );
 
         this.__sprites.blackHole = this.game.add.sprite(
-                200, 300, this.__assets.blackHole.name );
+                600, 300, this.__assets.blackHole.name );
         this.__sprites.blackHole.anchor.set( 0.5, 0.5 );
 
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -61,6 +80,17 @@ Game.prototype =
         this.__sprites.blackHole.body.mass = this.__parameters.blackHole_mass;
         
         this.__non_player_objects.push(this.__sprites.blackHole);
+        
+        this.maxScore = 0;
+        this.scoreText = this.add.text(this.world.centerX, 40,
+                                       this.maxScore.toFixed(0),
+                                       {
+                                           font: '62px Roboto Mono',
+                                           fill: "#ffffff",
+                                           align: "center"
+                                       });
+        this.scoreText.anchor.set(0.5);
+        this.offset_x = 0;
     },
 
     update : function()
@@ -94,8 +124,18 @@ Game.prototype =
                     (ship.body.position.x - ship.body.prev.x),
                     npo_sprite.body.position.y);
             });
+            this.offset_x = this.offset_x +
+                (ship.body.position.x - ship.body.prev.x);
             ship.body.position.setTo(ship.body.prev.x, ship.body.position.y);
         }
+
+        var currentScore = this.__parameters.score_constant * (this.offset_x +
+            ship.body.position.x + ship.body.halfWidth -
+            this.__parameters.start_position.x);
+        if (currentScore > this.maxScore) {
+            this.maxScore = currentScore
+        }
+        this.scoreText.setText(this.maxScore.toFixed(0))
     }
 };
 
