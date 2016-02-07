@@ -2,13 +2,6 @@ var Game = function( game )
 {
 };
 
-WebFontConfig = {
-    google: {
-      families: ['Roboto Mono']
-    }
-};
-
-
 Game.prototype =
 {
     __assets :
@@ -41,8 +34,9 @@ Game.prototype =
 
     preload : function()
     {
-        this.load.script('webfont',
-            '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+        this.load.bitmapFont('RobotoMono-Regular',
+                             '../../assets/RobotoMono-Regular.png',
+                             '../../assets/RobotoMono-Regular.fnt');
     },
     
     onload : function()
@@ -82,13 +76,9 @@ Game.prototype =
         this.__non_player_objects.push(this.__sprites.blackHole);
         
         this.maxScore = 0;
-        this.scoreText = this.add.text(this.world.centerX, 40,
-                                       this.maxScore.toFixed(0),
-                                       {
-                                           font: '62px Roboto Mono',
-                                           fill: "#ffffff",
-                                           align: "center"
-                                       });
+        this.scoreText = this.add.bitmapText(this.world.centerX, 45,
+                                             'RobotoMono-Regular',
+                                             this.maxScore.toFixed(0), 62);
         this.scoreText.anchor.set(0.5);
         this.offset_x = 0;
     },
