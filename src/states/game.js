@@ -29,14 +29,12 @@ Game.prototype =
             x: 100,
             y: 300
         },
-        score_constant: 0.05
+        score_constant: 0.05,
+        score_font: 'RobotoMono-Regular'
     },
 
     preload : function()
     {
-        this.load.bitmapFont('RobotoMono-Regular',
-                             '../../assets/RobotoMono-Regular.png',
-                             '../../assets/RobotoMono-Regular.fnt');
     },
     
     onload : function()
@@ -77,8 +75,7 @@ Game.prototype =
         
         this.maxScore = 0;
         this.scoreText = this.add.bitmapText(this.world.centerX, 45,
-                                             'RobotoMono-Regular',
-                                             this.maxScore.toFixed(0), 62);
+            this.__parameters.score_font, this.maxScore.toFixed(0), 62);
         this.scoreText.anchor.set(0.5);
         this.offset_x = 0;
     },
