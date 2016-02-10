@@ -25,8 +25,13 @@ Game.prototype =
         ship_mass: 1,
         blackHole_mass: 500000,
         camera_cutoff_x: 500,
-
-		render_body_debug_info: true
+        start_position: {
+            x: 100,
+            y: 300
+        },
+        score_constant: 0.05,
+        score_font: 'RobotoMono-Regular',
+	render_body_debug_info: true
     },
 
     __origin : new Phaser.Point(0, 0),
@@ -49,6 +54,12 @@ Game.prototype =
 		this.__sprites.ship = this.__createShip();
 		this.__sprites.blackHole = this.__createBlackHole();
         this.__non_player_objects.push(this.__sprites.blackHole);
+
+        this.maxScore = 0;
+        this.scoreText = this.add.bitmapText(this.world.centerX, 45,
+            this.__parameters.score_font, this.maxScore.toFixed(0), 62);
+        this.scoreText.anchor.set(0.5);
+        this.offset_x = 0;
     },
 
 	render : function()
@@ -115,10 +126,20 @@ Game.prototype =
                 npo_sprite.body.position.x -= shipXPositionDiff;
 			});
 
+            this.offset_x += shipXPositionDiff;
+
 			ship.body.position.setTo(ship.body.prev.x,
 									 ship.body.position.y);
         }
 
+        var currentScore = this.__parameters.score_constant * (this.offset_x +
+            ship.body.position.x + ship.body.halfWidth - this.__parameters.start_position.x);
+
+        if (currentScore > this.maxScore) {
+            this.maxScore = currentScore
+        }
+
+        this.scoreText.setText(this.maxScore.toFixed(0))
 
 		this.__checkCollisions();
     },
