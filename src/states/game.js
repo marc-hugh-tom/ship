@@ -80,7 +80,7 @@ Game.prototype =
 		ship.body.mass = this.__parameters.ship_mass;
 		ship.checkWorldBounds = true;
 		ship.events.onOutOfBounds.add(this.__shipOutOfBounds, true);
-		this.__ship_previous_position = ship.position;
+		ship.body.velocity.setTo(60, 0);
 
 		return ship;
 	},
