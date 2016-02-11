@@ -61,5 +61,11 @@ Core =
 		{
 			this.startState( this.__startingState );
 		}
+	},
+
+	// Taken from: http://stackoverflow.com/a/16608045
+	isArray : function(a)
+	{
+		return (!!a) && (a.constructor === Array);
 	}
 };
