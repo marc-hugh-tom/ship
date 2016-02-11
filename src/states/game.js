@@ -16,7 +16,7 @@ Game.prototype =
         }
     },
 
-    __sprites : {},
+    __sprites : null,
 
     __non_player_objects : [],
 
@@ -31,10 +31,16 @@ Game.prototype =
         },
         score_constant: 0.05,
         score_font: 'RobotoMono-Regular',
-	render_body_debug_info: true
+		render_body_debug_info: true
     },
 
     __origin : new Phaser.Point(0, 0),
+
+	init : function()
+	{
+		this.__sprites = {};
+		this.__non_player_objects.length = 0;
+	},
 
     onload : function()
     {
