@@ -2,18 +2,38 @@ var Game = function( game )
 {
 };
 
+Object.defineProperty(Game, "ASSETS_URL_PREFIX",
+	{ value: "../../assets" });
+
 Game.prototype =
 {
+	__assetsUrlPrefix : "../../assets",
     __assets :
     {
         ship : {
             name : "ship",
-            url : "../../assets/ship.png"
+            url : Game.ASSETS_URL_PREFIX + "/ship.png"
         },
         blackHole : {
             name : "black_hole",
-            url : "../../assets/black_hole.png"
-        }
+            url : Game.ASSETS_URL_PREFIX + "/black_hole.png"
+        },
+
+		asteroids :
+		[
+			{
+				name : "asteroid_1",
+				url : Game.ASSETS_URL_PREFIX + "/asteroid_1.png"
+			},
+			{
+				name : "asteroid_2",
+				url : Game.ASSETS_URL_PREFIX + "/asteroid_2.png"
+			},
+			{
+				name : "asteroid_3",
+				url : Game.ASSETS_URL_PREFIX + "/asteroid_3.png"
+			}
+		]
     },
 
     __sprites : null,
@@ -48,8 +68,25 @@ Game.prototype =
 
         Object.keys( this.__assets ).forEach( function( assetKey )
         {
-                var asset = this.__assets[ assetKey ]
-                preloadState.addImage( asset.name, asset.url );
+			var preloadImage = function(name, url)
+			{
+				console.log(name, url);
+				preloadState.addImage(name, url);
+			};
+
+			var asset = this.__assets[ assetKey ]
+			if (Core.isArray(asset))
+			{
+				console.log(asset);
+				asset.forEach(function(asset)
+				{
+					preloadImage(asset.name, asset.url);
+				});
+			}
+			else
+			{
+				preloadImage(asset.name, asset.url);
+			}
         }.bind( this ));
     },
 
