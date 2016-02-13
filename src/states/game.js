@@ -253,6 +253,19 @@ Game.prototype =
 
 		this.game.physics.arcade.enable(asteroid);
 
+		asteroid.body.angularVelocity = Rand.range(-20, 20);
+		asteroid.anchor.set(0.5, 0.5);
+		asteroid.body.velocity.setTo(
+			Rand.range(-2, 0),
+			Rand.range(-10, 10)
+		);
+
+		asteroid.checkWorldBounds = true;
+		asteroid.events.onOutOfBounds.add(
+			this.__asteroid_out_of_bounds, this);
+
+		asteroid.uuid = this.__get_uuid();
+
 		this.__non_player_objects.push(asteroid);
 	}
 };
