@@ -40,6 +40,8 @@ Game.prototype =
 
     __non_player_objects : [],
 
+	__asteroids : [],
+
     __parameters :
     {
         ship_mass: 1,
@@ -51,7 +53,11 @@ Game.prototype =
         },
         score_constant: 0.05,
         score_font: 'RobotoMono-Regular',
-		render_body_debug_info: true
+		render_body_debug_info: true,
+
+		// Distance travelled between asteroid spawns
+		asteroid_spawn_distance: 100,
+		last_asteroid_spawn_distance: 0
     },
 
     __origin : new Phaser.Point(0, 0),
@@ -60,6 +66,8 @@ Game.prototype =
 	{
 		this.__sprites = {};
 		this.__non_player_objects.length = 0;
+		this.__parameters.last_asteroid_spawn_distance = 0;
+		this.__asteroids.length = 0;
 	},
 
     onload : function()
@@ -70,14 +78,12 @@ Game.prototype =
         {
 			var preloadImage = function(name, url)
 			{
-				console.log(name, url);
 				preloadState.addImage(name, url);
 			};
 
 			var asset = this.__assets[ assetKey ]
 			if (Core.isArray(asset))
 			{
-				console.log(asset);
 				asset.forEach(function(asset)
 				{
 					preloadImage(asset.name, asset.url);
@@ -98,21 +104,13 @@ Game.prototype =
 		this.__sprites.blackHole = this.__createBlackHole();
         this.__non_player_objects.push(this.__sprites.blackHole);
 
+		// Score
         this.maxScore = 0;
         this.scoreText = this.add.bitmapText(this.world.centerX, 45,
             this.__parameters.score_font, this.maxScore.toFixed(0), 62);
         this.scoreText.anchor.set(0.5);
         this.offset_x = 0;
     },
-
-	render : function()
-	{
-		if (this.__parameters.render_body_debug_info )
-		{
-			this.game.debug.body( this.__sprites.ship );
-			this.game.debug.body( this.__sprites.blackHole );
-		}
-	},
 
 	__createShip : function()
 	{
@@ -137,6 +135,15 @@ Game.prototype =
 		blackHole.body.mass = this.__parameters.blackHole_mass;
 
 		return blackHole;
+	},
+
+	render : function()
+	{
+		if (this.__parameters.render_body_debug_info )
+		{
+			this.game.debug.body( this.__sprites.ship );
+			this.game.debug.body( this.__sprites.blackHole );
+		}
 	},
 
     update : function()
@@ -175,17 +182,35 @@ Game.prototype =
 									 ship.body.position.y);
         }
 
-        var currentScore = this.__parameters.score_constant * (this.offset_x +
-            ship.body.position.x + ship.body.halfWidth - this.__parameters.start_position.x);
-
-        if (currentScore > this.maxScore) {
-            this.maxScore = currentScore
-        }
-
-        this.scoreText.setText(this.maxScore.toFixed(0))
+		var distance_travelled = this.offset_x +
+			ship.body.position.x + ship.body.halfWidth -
+			this.__parameters.start_position.x;
+		this.__update_score(distance_travelled);
+		this.__update_asteroid_spawn(this.offset_x);
 
 		this.__checkCollisions();
     },
+
+	__update_score : function(distance_travelled)
+	{
+        var currentScore = this.__parameters.score_constant * distance_travelled;
+        if (currentScore > this.maxScore) {
+            this.maxScore = currentScore
+        }
+        this.scoreText.setText(this.maxScore.toFixed(0))
+	},
+
+	__update_asteroid_spawn : function( distance_travelled )
+	{
+		var difference = distance_travelled -
+			this.__parameters.last_asteroid_spawn_distance;
+		if ( difference > this.__parameters.asteroid_spawn_distance )
+		{
+			this.__spawn_asteroid();
+			this.__parameters.last_asteroid_spawn_distance =
+				distance_travelled;
+		}
+	},
 
 	__checkCollisions: function()
 	{
@@ -208,6 +233,20 @@ Game.prototype =
 		// For now, everything kills the player to we can go straight...
 		//...to the game over state
 		Core.startState( STATE_NAME.GAME_OVER );
+	},
+
+	__spawn_asteroid : function()
+	{
+		var asteroid_asset = Rand.choice( this.__assets.asteroids );
+		var asteroid = this.game.add.sprite(
+			SCREEN_DIMENSIONS[0] + 50,
+			Rand.range(100, SCREEN_DIMENSIONS[1] - 100),
+			asteroid_asset.name
+		);
+
+		this.game.physics.arcade.enable(asteroid);
+
+		this.__non_player_objects.push(asteroid);
 	}
 };
 
