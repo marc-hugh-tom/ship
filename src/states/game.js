@@ -186,17 +186,19 @@ Game.prototype =
 									 ship.body.position.y);
         }
 
-		var distance_travelled = this.offset_x +
-			ship.body.position.x + ship.body.halfWidth -
-			this.__parameters.start_position.x;
-		this.__update_score(distance_travelled);
-		this.__update_asteroid_spawn(this.offset_x);
+		this.__update_score();
+		this.__update_asteroid_spawn();
 
 		this.__checkCollisions();
     },
 
-	__update_score : function(distance_travelled)
+	__update_score : function()
 	{
+		var ship = this.__sprites.ship;
+		var distance_travelled = this.offset_x +
+			ship.body.position.x + ship.body.halfWidth -
+			this.__parameters.start_position.x;
+
         var currentScore = this.__parameters.score_constant * distance_travelled;
         if (currentScore > this.maxScore) {
             this.maxScore = currentScore
@@ -204,8 +206,9 @@ Game.prototype =
         this.scoreText.setText(this.maxScore.toFixed(0))
 	},
 
-	__update_asteroid_spawn : function( distance_travelled )
+	__update_asteroid_spawn : function()
 	{
+		var distance_travelled = this.offset_x;
 		var difference = distance_travelled -
 			this.__parameters.last_asteroid_spawn_distance;
 		if ( difference > this.__parameters.asteroid_spawn_distance )
