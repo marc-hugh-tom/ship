@@ -46,7 +46,7 @@ Game.prototype =
     {
         ship_mass: 1,
         blackHole_mass: 500000,
-        camera_cutoff_x: 500,
+        camera_cutoff_x: 300,
         start_position: {
             x: 100,
             y: 300
