@@ -120,7 +120,7 @@ Game.prototype =
 		this.game.physics.arcade.enable(ship);
 		ship.body.mass = this.__parameters.ship_mass;
 		ship.checkWorldBounds = true;
-		ship.events.onOutOfBounds.add(this.__shipOutOfBounds, true);
+		ship.events.onOutOfBounds.add(this.__shipOutOfBounds, this);
 		ship.body.velocity.setTo(60, 0);
 
 		return ship;
