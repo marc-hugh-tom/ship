@@ -267,7 +267,34 @@ Game.prototype =
 		asteroid.uuid = this.__get_uuid();
 
 		this.__non_player_objects.push(asteroid);
-	}
+	},
+
+	__uuid : 0,
+	__get_uuid : function()
+	{
+		this.__uuid += 1;
+		return this.__uuid;
+	},
+
+	__asteroid_out_of_bounds : function(asteroid)
+	{
+		if (asteroid.position.x > SCREEN_DIMENSIONS[1])
+		{
+			return;
+		}
+
+		asteroid.destroy();
+		this.__non_player_objects =
+			this.__non_player_objects.filter(function(item)
+			{
+				if (typeof item.uuid ==='undefined')
+				{
+					return true;
+				}
+
+				return item.uuid != asteroid.uuid;
+			});
+	},
 };
 
 Core.addState( STATE_NAME.GAME, Game )
