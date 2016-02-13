@@ -3,11 +3,11 @@ var Game = function( game )
 };
 
 Object.defineProperty(Game, "ASSETS_URL_PREFIX",
-	{ value: "../../assets" });
+    { value: "../../assets" });
 
 Game.prototype =
 {
-	__assetsUrlPrefix : "../../assets",
+    __assetsUrlPrefix : "../../assets",
     __assets :
     {
         ship : {
@@ -19,28 +19,28 @@ Game.prototype =
             url : Game.ASSETS_URL_PREFIX + "/black_hole.png"
         },
 
-		asteroids :
-		[
-			{
-				name : "asteroid_1",
-				url : Game.ASSETS_URL_PREFIX + "/asteroid_1.png"
-			},
-			{
-				name : "asteroid_2",
-				url : Game.ASSETS_URL_PREFIX + "/asteroid_2.png"
-			},
-			{
-				name : "asteroid_3",
-				url : Game.ASSETS_URL_PREFIX + "/asteroid_3.png"
-			}
-		]
+        asteroids :
+        [
+            {
+                name : "asteroid_1",
+                url : Game.ASSETS_URL_PREFIX + "/asteroid_1.png"
+            },
+            {
+                name : "asteroid_2",
+                url : Game.ASSETS_URL_PREFIX + "/asteroid_2.png"
+            },
+            {
+                name : "asteroid_3",
+                url : Game.ASSETS_URL_PREFIX + "/asteroid_3.png"
+            }
+        ]
     },
 
     __sprites : null,
 
     __non_player_objects : [],
 
-	__asteroids : [],
+    __asteroids : [],
 
     __parameters :
     {
@@ -53,22 +53,22 @@ Game.prototype =
         },
         score_constant: 0.05,
         score_font: 'RobotoMono-Regular',
-		render_body_debug_info: true,
+        render_body_debug_info: true,
 
-		// Distance travelled between asteroid spawns
-		asteroid_spawn_distance: 100,
-		last_asteroid_spawn_distance: 0
+        // Distance travelled between asteroid spawns
+        asteroid_spawn_distance: 100,
+        last_asteroid_spawn_distance: 0
     },
 
     __origin : new Phaser.Point(0, 0),
 
-	init : function()
-	{
-		this.__sprites = {};
-		this.__non_player_objects.length = 0;
-		this.__parameters.last_asteroid_spawn_distance = 0;
-		this.__asteroids.length = 0;
-	},
+    init : function()
+    {
+        this.__sprites = {};
+        this.__non_player_objects.length = 0;
+        this.__parameters.last_asteroid_spawn_distance = 0;
+        this.__asteroids.length = 0;
+    },
 
     onload : function()
     {
@@ -76,23 +76,23 @@ Game.prototype =
 
         Object.keys( this.__assets ).forEach( function( assetKey )
         {
-			var preloadImage = function(name, url)
-			{
-				preloadState.addImage(name, url);
-			};
+            var preloadImage = function(name, url)
+            {
+                preloadState.addImage(name, url);
+            };
 
-			var asset = this.__assets[ assetKey ]
-			if (Core.isArray(asset))
-			{
-				asset.forEach(function(asset)
-				{
-					preloadImage(asset.name, asset.url);
-				});
-			}
-			else
-			{
-				preloadImage(asset.name, asset.url);
-			}
+            var asset = this.__assets[ assetKey ]
+            if (Core.isArray(asset))
+            {
+                asset.forEach(function(asset)
+                {
+                    preloadImage(asset.name, asset.url);
+                });
+            }
+            else
+            {
+                preloadImage(asset.name, asset.url);
+            }
         }.bind( this ));
     },
 
@@ -100,11 +100,11 @@ Game.prototype =
     {
         this.game.physics.startSystem(Phaser.Physics.Arcade);
 
-		this.__sprites.ship = this.__createShip();
-		this.__sprites.blackHole = this.__createBlackHole();
+        this.__sprites.ship = this.__createShip();
+        this.__sprites.blackHole = this.__createBlackHole();
         this.__non_player_objects.push(this.__sprites.blackHole);
 
-		// Score
+        // Score
         this.maxScore = 0;
         this.scoreText = this.add.bitmapText(this.world.centerX, 45,
             this.__parameters.score_font, this.maxScore.toFixed(0), 62);
@@ -112,43 +112,43 @@ Game.prototype =
         this.offset_x = 0;
     },
 
-	__createShip : function()
-	{
-		var ship = this.game.add.sprite(
-			100, 200, this.__assets.ship.name);
-		ship.anchor.set(0.5, 0.5);
-		this.game.physics.arcade.enable(ship);
-		ship.body.mass = this.__parameters.ship_mass;
-		ship.checkWorldBounds = true;
-		ship.events.onOutOfBounds.add(this.__shipOutOfBounds, this);
-		ship.body.velocity.setTo(60, 0);
+    __createShip : function()
+    {
+        var ship = this.game.add.sprite(
+            100, 200, this.__assets.ship.name);
+        ship.anchor.set(0.5, 0.5);
+        this.game.physics.arcade.enable(ship);
+        ship.body.mass = this.__parameters.ship_mass;
+        ship.checkWorldBounds = true;
+        ship.events.onOutOfBounds.add(this.__shipOutOfBounds, this);
+        ship.body.velocity.setTo(60, 0);
 
-		return ship;
-	},
+        return ship;
+    },
 
-	__createBlackHole : function()
-	{
-		var blackHole = this.game.add.sprite(
-			200, 300, this.__assets.blackHole.name);
-		blackHole.anchor.set(0.5, 0.5);
-		this.game.physics.arcade.enable(blackHole);
-		blackHole.body.mass = this.__parameters.blackHole_mass;
+    __createBlackHole : function()
+    {
+        var blackHole = this.game.add.sprite(
+            200, 300, this.__assets.blackHole.name);
+        blackHole.anchor.set(0.5, 0.5);
+        this.game.physics.arcade.enable(blackHole);
+        blackHole.body.mass = this.__parameters.blackHole_mass;
 
-		return blackHole;
-	},
+        return blackHole;
+    },
 
-	render : function()
-	{
-		if (this.__parameters.render_body_debug_info )
-		{
-			this.game.debug.body( this.__sprites.ship );
+    render : function()
+    {
+        if (this.__parameters.render_body_debug_info )
+        {
+            this.game.debug.body( this.__sprites.ship );
 
-			this.__non_player_objects.forEach(function(npo)
-			{
-				this.game.debug.body(npo);
-			}.bind(this));
-		}
-	},
+            this.__non_player_objects.forEach(function(npo)
+            {
+                this.game.debug.body(npo);
+            }.bind(this));
+        }
+    },
 
     update : function()
     {
@@ -159,142 +159,142 @@ Game.prototype =
             Phaser.Math.distanceSq(ship.x, ship.y, blackHole.x, blackHole.y);
 
         var angleBetweenShipBH = Phaser.Math.angleBetweenPoints(ship.position,
-																blackHole.position);
-		ship.body.gravity.setTo(Math.cos(angleBetweenShipBH) * totalGravity,
-								Math.sin(angleBetweenShipBH) * totalGravity);
+                                                                blackHole.position);
+        ship.body.gravity.setTo(Math.cos(angleBetweenShipBH) * totalGravity,
+                                Math.sin(angleBetweenShipBH) * totalGravity);
 
         ship.body.rotation = 270 + Phaser.Math.radToDeg(
             Phaser.Math.angleBetweenPoints(ship.body.velocity, this.__origin));
 
         if (this.input.activePointer.leftButton.isDown) {
             blackHole.position.setTo(this.camera.x + this.input.mousePointer.position.x,
-									 this.camera.y + this.input.mousePointer.position.y);
+                                     this.camera.y + this.input.mousePointer.position.y);
         }
 
-		var shipPositionPastCutoff = ship.body.position.x > this.__parameters.camera_cutoff_x;
-		var shipMovingForwards = ship.body.velocity.x > 0;
+        var shipPositionPastCutoff = ship.body.position.x > this.__parameters.camera_cutoff_x;
+        var shipMovingForwards = ship.body.velocity.x > 0;
         if (shipPositionPastCutoff && shipMovingForwards) {
-			var shipXPositionDiff = ship.body.position.x - ship.body.prev.x;
+            var shipXPositionDiff = ship.body.position.x - ship.body.prev.x;
 
             this.__non_player_objects.forEach(function(npo_sprite) {
                 npo_sprite.body.position.x -= shipXPositionDiff;
-			});
+            });
 
             this.offset_x += shipXPositionDiff;
 
-			ship.body.position.setTo(ship.body.prev.x,
-									 ship.body.position.y);
+            ship.body.position.setTo(ship.body.prev.x,
+                                     ship.body.position.y);
         }
 
-		this.__update_score();
-		this.__update_asteroid_spawn();
+        this.__update_score();
+        this.__update_asteroid_spawn();
 
-		this.__checkCollisions();
+        this.__checkCollisions();
     },
 
-	__update_score : function()
-	{
-		var ship = this.__sprites.ship;
-		var distance_travelled = this.offset_x +
-			ship.body.position.x + ship.body.halfWidth -
-			this.__parameters.start_position.x;
+    __update_score : function()
+    {
+        var ship = this.__sprites.ship;
+        var distance_travelled = this.offset_x +
+            ship.body.position.x + ship.body.halfWidth -
+            this.__parameters.start_position.x;
 
         var currentScore = this.__parameters.score_constant * distance_travelled;
         if (currentScore > this.maxScore) {
             this.maxScore = currentScore
         }
         this.scoreText.setText(this.maxScore.toFixed(0))
-	},
+    },
 
-	__update_asteroid_spawn : function()
-	{
-		var distance_travelled = this.offset_x;
-		var difference = distance_travelled -
-			this.__parameters.last_asteroid_spawn_distance;
-		if ( difference > this.__parameters.asteroid_spawn_distance )
-		{
-			this.__spawn_asteroid();
-			this.__parameters.last_asteroid_spawn_distance =
-				distance_travelled;
-		}
-	},
+    __update_asteroid_spawn : function()
+    {
+        var distance_travelled = this.offset_x;
+        var difference = distance_travelled -
+            this.__parameters.last_asteroid_spawn_distance;
+        if ( difference > this.__parameters.asteroid_spawn_distance )
+        {
+            this.__spawn_asteroid();
+            this.__parameters.last_asteroid_spawn_distance =
+                distance_travelled;
+        }
+    },
 
-	__checkCollisions: function()
-	{
-		this.__non_player_objects.forEach(function(npo) {
-			this.game.physics.arcade.collide(
-				this.__sprites.ship,
-				npo,
-				this.__onCollision
-			)
-		}.bind(this));
-	},
+    __checkCollisions: function()
+    {
+        this.__non_player_objects.forEach(function(npo) {
+            this.game.physics.arcade.collide(
+                this.__sprites.ship,
+                npo,
+                this.__onCollision
+            )
+        }.bind(this));
+    },
 
-	__shipOutOfBounds : function()
-	{
-		Core.startState( STATE_NAME.GAME_OVER );
-	},
+    __shipOutOfBounds : function()
+    {
+        Core.startState( STATE_NAME.GAME_OVER );
+    },
 
-	__onCollision: function(player, npo)
-	{
-		// For now, everything kills the player to we can go straight...
-		//...to the game over state
-		Core.startState( STATE_NAME.GAME_OVER );
-	},
+    __onCollision: function(player, npo)
+    {
+        // For now, everything kills the player to we can go straight...
+        //...to the game over state
+        Core.startState( STATE_NAME.GAME_OVER );
+    },
 
-	__spawn_asteroid : function()
-	{
-		var asteroid_asset = Rand.choice( this.__assets.asteroids );
-		var asteroid = this.game.add.sprite(
-			SCREEN_DIMENSIONS[0] + 50,
-			Rand.range(100, SCREEN_DIMENSIONS[1] - 100),
-			asteroid_asset.name
-		);
+    __spawn_asteroid : function()
+    {
+        var asteroid_asset = Rand.choice( this.__assets.asteroids );
+        var asteroid = this.game.add.sprite(
+            SCREEN_DIMENSIONS[0] + 50,
+            Rand.range(100, SCREEN_DIMENSIONS[1] - 100),
+            asteroid_asset.name
+        );
 
-		this.game.physics.arcade.enable(asteroid);
+        this.game.physics.arcade.enable(asteroid);
 
-		asteroid.body.angularVelocity = Rand.range(-20, 20);
-		asteroid.anchor.set(0.5, 0.5);
-		asteroid.body.velocity.setTo(
-			Rand.range(-2, 0),
-			Rand.range(-10, 10)
-		);
+        asteroid.body.angularVelocity = Rand.range(-20, 20);
+        asteroid.anchor.set(0.5, 0.5);
+        asteroid.body.velocity.setTo(
+            Rand.range(-2, 0),
+            Rand.range(-10, 10)
+        );
 
-		asteroid.checkWorldBounds = true;
-		asteroid.events.onOutOfBounds.add(
-			this.__asteroid_out_of_bounds, this);
+        asteroid.checkWorldBounds = true;
+        asteroid.events.onOutOfBounds.add(
+            this.__asteroid_out_of_bounds, this);
 
-		asteroid.uuid = this.__get_uuid();
+        asteroid.uuid = this.__get_uuid();
 
-		this.__non_player_objects.push(asteroid);
-	},
+        this.__non_player_objects.push(asteroid);
+    },
 
-	__uuid : 0,
-	__get_uuid : function()
-	{
-		this.__uuid += 1;
-		return this.__uuid;
-	},
+    __uuid : 0,
+    __get_uuid : function()
+    {
+        this.__uuid += 1;
+        return this.__uuid;
+    },
 
-	__asteroid_out_of_bounds : function(asteroid)
-	{
-		if (asteroid.position.x > SCREEN_DIMENSIONS[1])
-		{
-			return;
-		}
+    __asteroid_out_of_bounds : function(asteroid)
+    {
+        if (asteroid.position.x > SCREEN_DIMENSIONS[1])
+        {
+            return;
+        }
 
-		asteroid.destroy();
-		this.__non_player_objects =
-			this.__non_player_objects.filter(function(item)
-			{
-				if (typeof item.uuid ==='undefined')
-				{
-					return true;
-				}
+        asteroid.destroy();
+        this.__non_player_objects =
+            this.__non_player_objects.filter(function(item)
+            {
+                if (typeof item.uuid ==='undefined')
+                {
+                    return true;
+                }
 
-				return item.uuid != asteroid.uuid;
-			});
-	},
+                return item.uuid != asteroid.uuid;
+            });
+    },
 };
 
 Core.addState( STATE_NAME.GAME, Game )
