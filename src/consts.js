@@ -5,3 +5,5 @@ STATE_NAME =
 	GAME : "game",
 	GAME_OVER : "gameover"
 };
+
+SCREEN_DIMENSIONS = [ 800, 600 ];
