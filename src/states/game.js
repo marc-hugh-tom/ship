@@ -142,7 +142,11 @@ Game.prototype =
 		if (this.__parameters.render_body_debug_info )
 		{
 			this.game.debug.body( this.__sprites.ship );
-			this.game.debug.body( this.__sprites.blackHole );
+
+			this.__non_player_objects.forEach(function(npo)
+			{
+				this.game.debug.body(npo);
+			}.bind(this));
 		}
 	},
 
