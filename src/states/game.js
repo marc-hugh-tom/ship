@@ -110,6 +110,11 @@ Game.prototype =
             this.__parameters.score_font, this.maxScore.toFixed(0), 62);
         this.scoreText.anchor.set(0.5);
         this.offset_x = 0;
+        
+        if (this.__parameters.render_body_debug_info )
+        {
+            this.debug_graphics = this.game.add.graphics();
+        }
     },
 
     __createShip : function()
@@ -122,7 +127,8 @@ Game.prototype =
         ship.checkWorldBounds = true;
         ship.events.onOutOfBounds.add(this.__shipOutOfBounds, this);
         ship.body.velocity.setTo(60, 0);
-
+        ship.hitCircles = [{x: 0, y: 20, r: 10},
+                           {x: 0, y: -15, r: 15}];
         return ship;
     },
 
@@ -133,7 +139,7 @@ Game.prototype =
         blackHole.anchor.set(0.5, 0.5);
         this.game.physics.arcade.enable(blackHole);
         blackHole.body.mass = this.__parameters.blackHole_mass;
-
+        blackHole.hitCircles = [{x: 0, y: 0, r: 30}];
         return blackHole;
     },
 
@@ -190,6 +196,26 @@ Game.prototype =
         this.__update_asteroid_spawn();
 
         this.__checkCollisions();
+        
+        if (this.__parameters.render_body_debug_info )
+        {
+            this.debug_graphics.clear();
+            var objects = [this.__sprites.ship].concat(this.__non_player_objects);
+            objects.forEach(function(object)
+            {
+                object.hitCircles.forEach(function(circle)
+                {
+                    this.debug_graphics.lineStyle(0);
+                    this.debug_graphics.beginFill(0x0000FF, 0.5);
+                    var radAngle = Phaser.Math.degToRad(object.body.rotation);
+                    this.debug_graphics.drawCircle(
+                        object.x + circle.y * Math.sin(radAngle) + circle.x * Math.cos(radAngle),
+                        object.y - circle.y * Math.cos(radAngle) + circle.x * Math.sin(radAngle),
+                        circle.r * 2);
+                    this.debug_graphics.endFill();
+                }.bind(this));
+            }.bind(this));
+        }
     },
 
     __update_score : function()
@@ -266,6 +292,7 @@ Game.prototype =
 
         asteroid.uuid = this.__get_uuid();
 
+        asteroid.hitCircles = [{x: 0, y: 0, r: 10}];
         this.__non_player_objects.push(asteroid);
     },
 
