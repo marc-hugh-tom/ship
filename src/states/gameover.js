@@ -9,11 +9,11 @@ GameOver.prototype = {
             url: "../../assets/game_over.png"
         },
 
-		replay:
-		{
-			name: "replay",
-			url: "../../assets/replay.png"
-		}
+        replay:
+        {
+            name: "replay",
+            url: "../../assets/replay.png"
+        }
     },
 
     __objects:
@@ -32,40 +32,40 @@ GameOver.prototype = {
 
     create: function()
     {
-		this.__objects.gameOver = this.__createGameOver();
-		this.__objects.replayButton = this.__createReplayButton();
+        this.__objects.gameOver = this.__createGameOver();
+        this.__objects.replayButton = this.__createReplayButton();
     },
 
-	__createGameOver: function()
-	{
-		var gameOver = this.game.add.sprite(
-			this.game.world.centerX,
-			this.game.world.centerY - 100,
-			this.__assets.gameOver.name
-		);
-		gameOver.anchor.set(0.5, 0.5);
-		gameOver.scale.set(2, 2);
+    __createGameOver: function()
+    {
+        var gameOver = this.game.add.sprite(
+            this.game.world.centerX,
+            this.game.world.centerY - 100,
+            this.__assets.gameOver.name
+        );
+        gameOver.anchor.set(0.5, 0.5);
+        gameOver.scale.set(2, 2);
 
-		return gameOver;
-	},
+        return gameOver;
+    },
 
-	__createReplayButton: function()
-	{
-		var replayButton = this.game.add.button(
-			this.game.world.centerX,
-			this.game.world.centerY + 50,
-			this.__assets.replay.name,
-			this.__onReplayButtonClicked
-		);
-		replayButton.anchor.set(0.5, 0.5);
+    __createReplayButton: function()
+    {
+        var replayButton = this.game.add.button(
+            this.game.world.centerX,
+            this.game.world.centerY + 50,
+            this.__assets.replay.name,
+            this.__onReplayButtonClicked
+        );
+        replayButton.anchor.set(0.5, 0.5);
 
-		return replayButton;
-	},
+        return replayButton;
+    },
 
-	__onReplayButtonClicked: function()
-	{
-		Core.startState( STATE_NAME.GAME );
-	}
+    __onReplayButtonClicked: function()
+    {
+        Core.startState( STATE_NAME.GAME );
+    }
 }
 
 Core.addState( STATE_NAME.GAME_OVER, GameOver );
