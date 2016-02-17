@@ -273,6 +273,9 @@ Game.prototype =
                 var circle2_y = object2.y - circle2.y * Math.cos(radAngle2) + circle2.x * Math.sin(radAngle2);
                 var distance = Phaser.Math.distance(circle1_x, circle1_y, circle2_x, circle2_y);
                 overlap = overlap || (distance < (circle1.r + circle2.r))
+                if (overlap) {
+                    return(overlap);
+                }
             });
         });
         return(overlap);
