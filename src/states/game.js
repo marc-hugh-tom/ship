@@ -123,6 +123,7 @@ Game.prototype =
             100, 200, this.__assets.ship.name);
         ship.anchor.set(0.5, 0.5);
         this.game.physics.arcade.enable(ship);
+        ship.body.setSize(60, 60, 0, 0);
         ship.body.mass = this.__parameters.ship_mass;
         ship.checkWorldBounds = true;
         ship.events.onOutOfBounds.add(this.__shipOutOfBounds, this);
@@ -248,12 +249,33 @@ Game.prototype =
     __checkCollisions: function()
     {
         this.__non_player_objects.forEach(function(npo) {
-            this.game.physics.arcade.collide(
+            this.game.physics.arcade.overlap(
                 this.__sprites.ship,
                 npo,
-                this.__onCollision
+                this.__onCollision,
+                this.__circleOverlapCheck
             )
         }.bind(this));
+    },
+
+    __circleOverlapCheck: function(object1, object2)
+    {
+        var overlap = false;
+        object1.hitCircles.forEach(function(circle1)
+        {
+            object2.hitCircles.forEach(function(circle2)
+            {
+                var radAngle1 = Phaser.Math.degToRad(object1.body.rotation);
+                var circle1_x = object1.x + circle1.y * Math.sin(radAngle1) + circle1.x * Math.cos(radAngle1);
+                var circle1_y = object1.y - circle1.y * Math.cos(radAngle1) + circle1.x * Math.sin(radAngle1);
+                var radAngle2 = Phaser.Math.degToRad(object2.body.rotation);
+                var circle2_x = object2.x + circle2.y * Math.sin(radAngle2) + circle2.x * Math.cos(radAngle2);
+                var circle2_y = object2.y - circle2.y * Math.cos(radAngle2) + circle2.x * Math.sin(radAngle2);
+                var distance = Phaser.Math.distance(circle1_x, circle1_y, circle2_x, circle2_y);
+                overlap = overlap || (distance < (circle1.r + circle2.r))
+            });
+        });
+        return(overlap);
     },
 
     __shipOutOfBounds : function()
