@@ -110,6 +110,11 @@ Game.prototype =
             this.__parameters.score_font, this.maxScore.toFixed(0), 62);
         this.scoreText.anchor.set(0.5);
         this.offset_x = 0;
+        
+        if (this.__parameters.render_body_debug_info )
+        {
+            this.debug_graphics = this.game.add.graphics();
+        }
     },
 
     __createShip : function()
@@ -118,11 +123,13 @@ Game.prototype =
             100, 200, this.__assets.ship.name);
         ship.anchor.set(0.5, 0.5);
         this.game.physics.arcade.enable(ship);
+        ship.body.setSize(60, 60, 0, 0);
         ship.body.mass = this.__parameters.ship_mass;
         ship.checkWorldBounds = true;
         ship.events.onOutOfBounds.add(this.__shipOutOfBounds, this);
         ship.body.velocity.setTo(60, 0);
-
+        ship.hitCircles = [{x: 0, y: 20, r: 10},
+                           {x: 0, y: -15, r: 15}];
         return ship;
     },
 
@@ -133,7 +140,7 @@ Game.prototype =
         blackHole.anchor.set(0.5, 0.5);
         this.game.physics.arcade.enable(blackHole);
         blackHole.body.mass = this.__parameters.blackHole_mass;
-
+        blackHole.hitCircles = [{x: 0, y: 0, r: 30}];
         return blackHole;
     },
 
@@ -190,6 +197,26 @@ Game.prototype =
         this.__update_asteroid_spawn();
 
         this.__checkCollisions();
+        
+        if (this.__parameters.render_body_debug_info )
+        {
+            this.debug_graphics.clear();
+            var objects = [this.__sprites.ship].concat(this.__non_player_objects);
+            objects.forEach(function(object)
+            {
+                object.hitCircles.forEach(function(circle)
+                {
+                    this.debug_graphics.lineStyle(0);
+                    this.debug_graphics.beginFill(0x0000FF, 0.5);
+                    var radAngle = Phaser.Math.degToRad(object.body.rotation);
+                    this.debug_graphics.drawCircle(
+                        object.x + circle.y * Math.sin(radAngle) + circle.x * Math.cos(radAngle),
+                        object.y - circle.y * Math.cos(radAngle) + circle.x * Math.sin(radAngle),
+                        circle.r * 2);
+                    this.debug_graphics.endFill();
+                }.bind(this));
+            }.bind(this));
+        }
     },
 
     __update_score : function()
@@ -222,12 +249,36 @@ Game.prototype =
     __checkCollisions: function()
     {
         this.__non_player_objects.forEach(function(npo) {
-            this.game.physics.arcade.collide(
+            this.game.physics.arcade.overlap(
                 this.__sprites.ship,
                 npo,
-                this.__onCollision
+                this.__onCollision,
+                this.__circleOverlapCheck
             )
         }.bind(this));
+    },
+
+    __circleOverlapCheck: function(object1, object2)
+    {
+        var overlap = false;
+        object1.hitCircles.forEach(function(circle1)
+        {
+            object2.hitCircles.forEach(function(circle2)
+            {
+                var radAngle1 = Phaser.Math.degToRad(object1.body.rotation);
+                var circle1_x = object1.x + circle1.y * Math.sin(radAngle1) + circle1.x * Math.cos(radAngle1);
+                var circle1_y = object1.y - circle1.y * Math.cos(radAngle1) + circle1.x * Math.sin(radAngle1);
+                var radAngle2 = Phaser.Math.degToRad(object2.body.rotation);
+                var circle2_x = object2.x + circle2.y * Math.sin(radAngle2) + circle2.x * Math.cos(radAngle2);
+                var circle2_y = object2.y - circle2.y * Math.cos(radAngle2) + circle2.x * Math.sin(radAngle2);
+                var distance = Phaser.Math.distance(circle1_x, circle1_y, circle2_x, circle2_y);
+                overlap = overlap || (distance < (circle1.r + circle2.r))
+                if (overlap) {
+                    return(overlap);
+                }
+            });
+        });
+        return(overlap);
     },
 
     __shipOutOfBounds : function()
@@ -266,6 +317,7 @@ Game.prototype =
 
         asteroid.uuid = this.__get_uuid();
 
+        asteroid.hitCircles = [{x: 0, y: 0, r: 10}];
         this.__non_player_objects.push(asteroid);
     },
 
