@@ -141,6 +141,10 @@ Game.prototype =
         this.game.physics.arcade.enable(blackHole);
         blackHole.body.mass = this.__parameters.blackHole_mass;
         blackHole.hitCircles = [{x: 0, y: 0, r: 30}];
+        this.input.activePointer.leftButton.onDown.add(function() {
+            blackHole.position.setTo(
+                this.camera.x + this.input.mousePointer.position.x,
+                this.camera.y + this.input.mousePointer.position.y)}, this);
         return blackHole;
     },
 
@@ -173,16 +177,10 @@ Game.prototype =
         ship.body.rotation = 270 + Phaser.Math.radToDeg(
             Phaser.Math.angleBetweenPoints(ship.body.velocity, this.__origin));
 
-        if (this.input.activePointer.leftButton.isDown) {
-            blackHole.position.setTo(this.camera.x + this.input.mousePointer.position.x,
-                                     this.camera.y + this.input.mousePointer.position.y);
-        }
-
         var shipPositionPastCutoff = ship.body.position.x > this.__parameters.camera_cutoff_x;
         var shipMovingForwards = ship.body.velocity.x > 0;
         if (shipPositionPastCutoff && shipMovingForwards) {
             var shipXPositionDiff = ship.body.position.x - ship.body.prev.x;
-
             this.__non_player_objects.forEach(function(npo_sprite) {
                 npo_sprite.body.position.x -= shipXPositionDiff;
             });
