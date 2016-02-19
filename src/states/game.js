@@ -53,7 +53,7 @@ Game.prototype =
         },
         score_constant: 0.05,
         score_font: 'RobotoMono-Regular',
-        render_body_debug_info: true,
+        render_body_debug_info: false,
 
         // Distance travelled between asteroid spawns
         asteroid_spawn_distance: 100,
@@ -110,7 +110,7 @@ Game.prototype =
             this.__parameters.score_font, this.maxScore.toFixed(0), 62);
         this.scoreText.anchor.set(0.5);
         this.offset_x = 0;
-        
+
         if (this.__parameters.render_body_debug_info )
         {
             this.debug_graphics = this.game.add.graphics();
@@ -195,7 +195,7 @@ Game.prototype =
         this.__update_asteroid_spawn();
 
         this.__checkCollisions();
-        
+
         if (this.__parameters.render_body_debug_info )
         {
             this.debug_graphics.clear();
