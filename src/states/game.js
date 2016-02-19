@@ -40,6 +40,8 @@ Game.prototype =
 
     __non_player_objects : [],
 
+    __stars : [],
+
     __asteroids : [],
 
     __parameters :
@@ -57,7 +59,10 @@ Game.prototype =
 
         // Distance travelled between asteroid spawns
         asteroid_spawn_distance: 100,
-        last_asteroid_spawn_distance: 0
+        last_asteroid_spawn_distance: 0,
+        // Distance travelled between star spawns
+        star_spawn_distance: 50,
+        last_star_spawn_distance: 0
     },
 
     __origin : new Phaser.Point(0, 0),
@@ -66,6 +71,7 @@ Game.prototype =
     {
         this.__sprites = {};
         this.__non_player_objects.length = 0;
+        this.__stars.length = 0;
         this.__parameters.last_asteroid_spawn_distance = 0;
         this.__asteroids.length = 0;
     },
@@ -115,6 +121,21 @@ Game.prototype =
         {
             this.debug_graphics = this.game.add.graphics();
         }
+        
+        var bmd = this.game.add.bitmapData(3, 3);
+        bmd.context.fillStyle = 'rgb(255,255,255)';
+        bmd.context.fillRect(0, 0, 3, 3);
+        this.game.cache.addBitmapData('star3', bmd);
+
+        var bmd = this.game.add.bitmapData(2, 2);
+        bmd.context.fillStyle = 'rgb(255,255,255)';
+        bmd.context.fillRect(0, 0, 2, 2);
+        this.game.cache.addBitmapData('star2', bmd);
+
+        var bmd = this.game.add.bitmapData(1, 1);
+        bmd.context.fillStyle = 'rgb(255,255,255)';
+        bmd.context.fillRect(0, 0, 1, 1);
+        this.game.cache.addBitmapData('star1', bmd);        
     },
 
     __createShip : function()
@@ -130,6 +151,7 @@ Game.prototype =
         ship.body.velocity.setTo(60, 0);
         ship.hitCircles = [{x: 0, y: 20, r: 10},
                            {x: 0, y: -15, r: 15}];
+        ship.parallax_multiplier = 1;
         return ship;
     },
 
@@ -145,6 +167,7 @@ Game.prototype =
             blackHole.position.setTo(
                 this.camera.x + this.input.mousePointer.position.x,
                 this.camera.y + this.input.mousePointer.position.y)}, this);
+        blackHole.parallax_multiplier = 1;
         return blackHole;
     },
 
@@ -183,6 +206,10 @@ Game.prototype =
             var shipXPositionDiff = ship.body.position.x - ship.body.prev.x;
             this.__non_player_objects.forEach(function(npo_sprite) {
                 npo_sprite.body.position.x -= shipXPositionDiff;
+            });
+
+            this.__stars.forEach(function(star) {
+                star.x -= shipXPositionDiff;
             });
 
             this.offset_x += shipXPositionDiff;
@@ -240,6 +267,12 @@ Game.prototype =
         {
             this.__spawn_asteroid();
             this.__parameters.last_asteroid_spawn_distance =
+                distance_travelled;
+        }
+        if ( difference > this.__parameters.star_spawn_distance )
+        {
+            this.__spawn_star();
+            this.__parameters.last_star_spawn_distance =
                 distance_travelled;
         }
     },
@@ -325,6 +358,22 @@ Game.prototype =
 
         asteroid.hitCircles = [{x: 0, y: 0, r: 10}];
         this.__non_player_objects.push(asteroid);
+    },
+
+    __spawn_star : function()
+    {
+        var size = Rand.int_range(1, 3);
+        console.log(size);
+        var star = this.game.add.sprite(
+            SCREEN_DIMENSIONS[0] + 50,
+            Rand.range(4, SCREEN_DIMENSIONS[1] - 5),
+            this.game.cache.getBitmapData('star' + 1)
+        );
+        this.game.physics.arcade.enable(star);
+        star.anchor.set(0.5, 0.5);
+        star.parallax_multiplier = size / 3;
+        star.hitCircles = [{x: 0, y: 0, r: 0}];
+        this.__stars.push(star);
     },
 
     __uuid : 0,
