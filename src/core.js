@@ -20,9 +20,10 @@ Core =
         return this.__states[ name ].prototype;
     },
 
-    startState : function( name )
+    startState : function( name, params )
     {
-        this.__game.state.start( name );
+        params = params || {}
+        this.__game.state.start( name, true, false, params );
     },
 
     onload : function()
