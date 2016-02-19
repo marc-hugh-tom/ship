@@ -250,7 +250,7 @@ Game.prototype =
             this.game.physics.arcade.overlap(
                 this.__sprites.ship,
                 npo,
-                this.__onCollision,
+                this.__onCollision.bind(this),
                 this.__circleOverlapCheck
             )
         }.bind(this));
