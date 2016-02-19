@@ -281,14 +281,22 @@ Game.prototype =
 
     __shipOutOfBounds : function()
     {
-        Core.startState( STATE_NAME.GAME_OVER );
+        this.__game_over();
     },
 
     __onCollision: function(player, npo)
     {
         // For now, everything kills the player to we can go straight...
         //...to the game over state
-        Core.startState( STATE_NAME.GAME_OVER );
+        this.__game_over();
+    },
+
+    __game_over : function()
+    {
+        Core.startState( CONSTS.STATE_NAME.GAME_OVER,
+            {
+                score : this.maxScore
+            });
     },
 
     __spawn_asteroid : function()
