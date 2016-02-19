@@ -8,8 +8,8 @@ Boot.prototype =
     {
         this.stage.backgroundColor = "#171642";
 
-        Core.startState( STATE_NAME.PRELOAD );
+        Core.startState( CONSTS.STATE_NAME.PRELOAD );
     }
 };
 
-Core.addState( STATE_NAME.BOOT, Boot, true );
+Core.addState( CONSTS.STATE_NAME.BOOT, Boot, true );

@@ -13,14 +13,14 @@ Preload.prototype =
             this.load.image( imageName, this.__images[ imageName ] );
         }.bind( this ));
         // Load the font used for the score display
-        this.load.bitmapFont('RobotoMono-Regular',
-                             '../../assets/RobotoMono-Regular.png',
-                             '../../assets/RobotoMono-Regular.fnt');
+        this.load.bitmapFont(CONSTS.FONT_NAME,
+            CONSTS.ASSETS_URL_PREFIX + '/RobotoMono-Regular.png',
+            CONSTS.ASSETS_URL_PREFIX + '/RobotoMono-Regular.fnt');
     },
 
     create : function()
     {
-        Core.startState( STATE_NAME.GAME );
+        Core.startState( CONSTS.STATE_NAME.GAME );
     },
 
     addImage : function( name, path )
@@ -29,4 +29,4 @@ Preload.prototype =
     }
 };
 
-Core.addState( STATE_NAME.PRELOAD, Preload );
+Core.addState( CONSTS.STATE_NAME.PRELOAD, Preload );

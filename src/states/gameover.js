@@ -6,13 +6,13 @@ GameOver.prototype = {
         gameOver:
         {
             name: "game_over",
-            url: "../../assets/game_over.png"
+            url: CONSTS.ASSETS_URL_PREFIX + "/game_over.png"
         },
 
         replay:
         {
             name: "replay",
-            url: "../../assets/replay.png"
+            url: CONSTS.ASSETS_URL_PREFIX + "/replay.png"
         }
     },
 
@@ -21,7 +21,7 @@ GameOver.prototype = {
 
     onload: function()
     {
-        preloadState = Core.getState( STATE_NAME.PRELOAD );
+        preloadState = Core.getState( CONSTS.STATE_NAME.PRELOAD );
 
         Object.keys( this.__assets ).forEach( function( assetKey )
         {
@@ -64,8 +64,8 @@ GameOver.prototype = {
 
     __onReplayButtonClicked: function()
     {
-        Core.startState( STATE_NAME.GAME );
+        Core.startState( CONSTS.STATE_NAME.GAME );
     }
 }
 
-Core.addState( STATE_NAME.GAME_OVER, GameOver );
+Core.addState( CONSTS.STATE_NAME.GAME_OVER, GameOver );
