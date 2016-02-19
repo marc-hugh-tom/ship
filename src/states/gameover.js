@@ -19,6 +19,16 @@ GameOver.prototype = {
     __objects:
     {},
 
+    __score_text : null,
+
+    init: function(params)
+    {
+        var score = params.score || 0;
+        this.__score_text = this.add.bitmapText(this.world.centerX,
+            45, CONSTS.FONT_NAME, score.toFixed(0), 62);
+        this.__score_text.anchor.set(0.5);
+    },
+
     onload: function()
     {
         preloadState = Core.getState( CONSTS.STATE_NAME.PRELOAD );
