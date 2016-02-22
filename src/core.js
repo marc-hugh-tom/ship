@@ -20,16 +20,17 @@ Core =
         return this.__states[ name ].prototype;
     },
 
-    startState : function( name )
+    startState : function( name, params )
     {
-        this.__game.state.start( name );
+        params = params || {}
+        this.__game.state.start( name, true, false, params );
     },
 
     onload : function()
     {
         // Create game
         this.__game = new Phaser.Game(
-            SCREEN_DIMENSIONS[0], SCREEN_DIMENSIONS[1]
+            CONSTS.SCREEN_DIMENSIONS[0], CONSTS.SCREEN_DIMENSIONS[1]
         );
 
         this.__add_states();
