@@ -61,7 +61,7 @@ Game.prototype =
         asteroid_spawn_distance: 100,
         last_asteroid_spawn_distance: 0,
         // Distance travelled between star spawns
-        star_spawn_distance: 50,
+        star_spawn_distance: 70,
         last_star_spawn_distance: 0
     },
 
@@ -122,19 +122,25 @@ Game.prototype =
             this.debug_graphics = this.game.add.graphics();
         }
         
-        var bmd = this.game.add.bitmapData(3, 3);
-        bmd.context.fillStyle = 'rgb(255,255,255)';
-        bmd.context.fillRect(0, 0, 3, 3);
+        var bmd = this.game.add.bitmapData(10, 10);
+        bmd.context.beginPath();
+        bmd.context.fillStyle = 'white';
+        bmd.context.arc(5, 5, 3, 0, 2 * Math.PI);
+        bmd.context.fill();
         this.game.cache.addBitmapData('star3', bmd);
 
-        var bmd = this.game.add.bitmapData(2, 2);
-        bmd.context.fillStyle = 'rgb(255,255,255)';
-        bmd.context.fillRect(0, 0, 2, 2);
+        var bmd = this.game.add.bitmapData(10, 10);
+        bmd.context.beginPath();
+        bmd.context.fillStyle = 'white';
+        bmd.context.arc(5, 5, 2, 0, 2 * Math.PI);
+        bmd.context.fill();
         this.game.cache.addBitmapData('star2', bmd);
 
-        var bmd = this.game.add.bitmapData(1, 1);
-        bmd.context.fillStyle = 'rgb(255,255,255)';
-        bmd.context.fillRect(0, 0, 1, 1);
+        var bmd = this.game.add.bitmapData(10, 10);
+        bmd.context.beginPath();
+        bmd.context.fillStyle = 'white';
+        bmd.context.arc(5, 5, 1, 0, 2 * Math.PI);
+        bmd.context.fill();
         this.game.cache.addBitmapData('star1', bmd);        
     },
 
@@ -209,7 +215,7 @@ Game.prototype =
             });
 
             this.__stars.forEach(function(star) {
-                star.x -= shipXPositionDiff;
+                star.x -= shipXPositionDiff * star.parallax_multiplier;
             });
 
             this.offset_x += shipXPositionDiff;
@@ -354,17 +360,18 @@ Game.prototype =
 
     __spawn_star : function()
     {
-        var size = Rand.int_range(1, 3);
+        var size = Rand.int_range(1, 4);
         console.log(size);
         var star = this.game.add.sprite(
             SCREEN_DIMENSIONS[0] + 50,
             Rand.range(4, SCREEN_DIMENSIONS[1] - 5),
-            this.game.cache.getBitmapData('star' + 1)
+            this.game.cache.getBitmapData('star' + size)
         );
         this.game.physics.arcade.enable(star);
         star.anchor.set(0.5, 0.5);
         star.parallax_multiplier = size / 3;
         star.hitCircles = [{x: 0, y: 0, r: 0}];
+        star.parallax_multiplier = size / 3;
         this.__stars.push(star);
     },
 
