@@ -12,26 +12,26 @@ Game.prototype =
     {
         ship : {
             name : "ship",
-            url : Game.ASSETS_URL_PREFIX + "/ship.png"
+            url : CONSTS.ASSETS_URL_PREFIX + "/ship.png"
         },
         blackHole : {
             name : "black_hole",
-            url : Game.ASSETS_URL_PREFIX + "/black_hole.png"
+            url : CONSTS.ASSETS_URL_PREFIX + "/black_hole.png"
         },
 
         asteroids :
         [
             {
                 name : "asteroid_1",
-                url : Game.ASSETS_URL_PREFIX + "/asteroid_1.png"
+                url : CONSTS.ASSETS_URL_PREFIX + "/asteroid_1.png"
             },
             {
                 name : "asteroid_2",
-                url : Game.ASSETS_URL_PREFIX + "/asteroid_2.png"
+                url : CONSTS.ASSETS_URL_PREFIX + "/asteroid_2.png"
             },
             {
                 name : "asteroid_3",
-                url : Game.ASSETS_URL_PREFIX + "/asteroid_3.png"
+                url : CONSTS.ASSETS_URL_PREFIX + "/asteroid_3.png"
             }
         ]
     },
@@ -72,7 +72,7 @@ Game.prototype =
 
     onload : function()
     {
-        preloadState = Core.getState( STATE_NAME.PRELOAD );
+        preloadState = Core.getState( CONSTS.STATE_NAME.PRELOAD );
 
         Object.keys( this.__assets ).forEach( function( assetKey )
         {
@@ -250,7 +250,7 @@ Game.prototype =
             this.game.physics.arcade.overlap(
                 this.__sprites.ship,
                 npo,
-                this.__onCollision,
+                this.__onCollision.bind(this),
                 this.__circleOverlapCheck
             )
         }.bind(this));
@@ -281,22 +281,30 @@ Game.prototype =
 
     __shipOutOfBounds : function()
     {
-        Core.startState( STATE_NAME.GAME_OVER );
+        this.__game_over();
     },
 
     __onCollision: function(player, npo)
     {
         // For now, everything kills the player to we can go straight...
         //...to the game over state
-        Core.startState( STATE_NAME.GAME_OVER );
+        this.__game_over();
+    },
+
+    __game_over : function()
+    {
+        Core.startState( CONSTS.STATE_NAME.GAME_OVER,
+            {
+                score : this.maxScore
+            });
     },
 
     __spawn_asteroid : function()
     {
         var asteroid_asset = Rand.choice( this.__assets.asteroids );
         var asteroid = this.game.add.sprite(
-            SCREEN_DIMENSIONS[0] + 50,
-            Rand.range(100, SCREEN_DIMENSIONS[1] - 100),
+            CONSTS.SCREEN_DIMENSIONS[0] + 50,
+            Rand.range(100, CONSTS.SCREEN_DIMENSIONS[1] - 100),
             asteroid_asset.name
         );
 
@@ -328,7 +336,7 @@ Game.prototype =
 
     __asteroid_out_of_bounds : function(asteroid)
     {
-        if (asteroid.position.x > SCREEN_DIMENSIONS[1])
+        if (asteroid.position.x > CONSTS.SCREEN_DIMENSIONS[1])
         {
             return;
         }
@@ -347,4 +355,4 @@ Game.prototype =
     },
 };
 
-Core.addState( STATE_NAME.GAME, Game )
+Core.addState( CONSTS.STATE_NAME.GAME, Game )

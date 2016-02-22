@@ -6,22 +6,32 @@ GameOver.prototype = {
         gameOver:
         {
             name: "game_over",
-            url: "../../assets/game_over.png"
+            url: CONSTS.ASSETS_URL_PREFIX + "/game_over.png"
         },
 
         replay:
         {
             name: "replay",
-            url: "../../assets/replay.png"
+            url: CONSTS.ASSETS_URL_PREFIX + "/replay.png"
         }
     },
 
     __objects:
     {},
 
+    __score_text : null,
+
+    init: function(params)
+    {
+        var score = params.score || 0;
+        this.__score_text = this.add.bitmapText(this.world.centerX,
+            45, CONSTS.FONT_NAME, score.toFixed(0), 62);
+        this.__score_text.anchor.set(0.5);
+    },
+
     onload: function()
     {
-        preloadState = Core.getState( STATE_NAME.PRELOAD );
+        preloadState = Core.getState( CONSTS.STATE_NAME.PRELOAD );
 
         Object.keys( this.__assets ).forEach( function( assetKey )
         {
@@ -64,8 +74,8 @@ GameOver.prototype = {
 
     __onReplayButtonClicked: function()
     {
-        Core.startState( STATE_NAME.GAME );
+        Core.startState( CONSTS.STATE_NAME.GAME );
     }
 }
 
-Core.addState( STATE_NAME.GAME_OVER, GameOver );
+Core.addState( CONSTS.STATE_NAME.GAME_OVER, GameOver );
