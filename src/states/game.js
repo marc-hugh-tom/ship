@@ -122,26 +122,14 @@ Game.prototype =
             this.debug_graphics = this.game.add.graphics();
         }
         
-        var bmd = this.game.add.bitmapData(10, 10);
-        bmd.context.beginPath();
-        bmd.context.fillStyle = 'white';
-        bmd.context.arc(5, 5, 3, 0, 2 * Math.PI);
-        bmd.context.fill();
-        this.game.cache.addBitmapData('star3', bmd);
-
-        var bmd = this.game.add.bitmapData(10, 10);
-        bmd.context.beginPath();
-        bmd.context.fillStyle = 'white';
-        bmd.context.arc(5, 5, 2, 0, 2 * Math.PI);
-        bmd.context.fill();
-        this.game.cache.addBitmapData('star2', bmd);
-
-        var bmd = this.game.add.bitmapData(10, 10);
-        bmd.context.beginPath();
-        bmd.context.fillStyle = 'white';
-        bmd.context.arc(5, 5, 1, 0, 2 * Math.PI);
-        bmd.context.fill();
-        this.game.cache.addBitmapData('star1', bmd);        
+        for (size = 1; size < 4; size++) { 
+            var bmd = this.game.add.bitmapData(10, 10);
+            bmd.context.beginPath();
+            bmd.context.fillStyle = 'white';
+            bmd.context.arc(5, 5, size, 0, 2 * Math.PI);
+            bmd.context.fill();
+            this.game.cache.addBitmapData('star' + size, bmd);
+        }
     },
 
     __createShip : function()
@@ -157,7 +145,6 @@ Game.prototype =
         ship.body.velocity.setTo(60, 0);
         ship.hitCircles = [{x: 0, y: 20, r: 10},
                            {x: 0, y: -15, r: 15}];
-        ship.parallax_multiplier = 1;
         return ship;
     },
 
@@ -173,7 +160,6 @@ Game.prototype =
             blackHole.position.setTo(
                 this.camera.x + this.input.mousePointer.position.x,
                 this.camera.y + this.input.mousePointer.position.y)}, this);
-        blackHole.parallax_multiplier = 1;
         return blackHole;
     },
 
@@ -225,7 +211,7 @@ Game.prototype =
         }
 
         this.__update_score();
-        this.__update_asteroid_spawn();
+        this.__update_spawning();
 
         this.__checkCollisions();
 
@@ -264,7 +250,7 @@ Game.prototype =
         this.scoreText.setText(this.maxScore.toFixed(0))
     },
 
-    __update_asteroid_spawn : function()
+    __update_spawning : function()
     {
         var distance_travelled = this.offset_x;
         var difference = distance_travelled -
@@ -369,17 +355,18 @@ Game.prototype =
     __spawn_star : function()
     {
         var size = Rand.int_range(1, 4);
-        console.log(size);
         var star = this.game.add.sprite(
-            SCREEN_DIMENSIONS[0] + 50,
-            Rand.range(4, SCREEN_DIMENSIONS[1] - 5),
+            CONSTS.SCREEN_DIMENSIONS[0] + 50,
+            Rand.range(4, CONSTS.SCREEN_DIMENSIONS[1] - 5),
             this.game.cache.getBitmapData('star' + size)
         );
-        this.game.physics.arcade.enable(star);
         star.anchor.set(0.5, 0.5);
-        star.parallax_multiplier = size / 3;
         star.hitCircles = [{x: 0, y: 0, r: 0}];
-        star.parallax_multiplier = size / 3;
+        star.parallax_multiplier = size / 4;
+        star.checkWorldBounds = true;
+        star.events.onOutOfBounds.add(
+            this.__star_out_of_bounds, this);
+        star.uuid = this.__get_uuid();
         this.__stars.push(star);
     },
 
@@ -396,7 +383,6 @@ Game.prototype =
         {
             return;
         }
-
         asteroid.destroy();
         this.__non_player_objects =
             this.__non_player_objects.filter(function(item)
@@ -405,8 +391,24 @@ Game.prototype =
                 {
                     return true;
                 }
-
                 return item.uuid != asteroid.uuid;
+            });
+    },
+    __star_out_of_bounds : function(star)
+    {
+        if (star.position.x > CONSTS.SCREEN_DIMENSIONS[1])
+        {
+            return;
+        }
+        star.destroy();
+        this.__stars =
+            this.__stars.filter(function(item)
+            {
+                if (typeof item.uuid ==='undefined')
+                {
+                    return true;
+                }
+                return item.uuid != star.uuid;
             });
     },
 };
