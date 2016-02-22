@@ -145,7 +145,6 @@ Game.prototype =
         ship.body.velocity.setTo(60, 0);
         ship.hitCircles = [{x: 0, y: 20, r: 10},
                            {x: 0, y: -15, r: 15}];
-        ship.parallax_multiplier = 1;
         return ship;
     },
 
@@ -161,7 +160,6 @@ Game.prototype =
             blackHole.position.setTo(
                 this.camera.x + this.input.mousePointer.position.x,
                 this.camera.y + this.input.mousePointer.position.y)}, this);
-        blackHole.parallax_multiplier = 1;
         return blackHole;
     },
 
