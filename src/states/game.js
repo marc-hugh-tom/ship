@@ -358,7 +358,7 @@ Game.prototype =
 
         asteroid.checkWorldBounds = true;
         asteroid.events.onOutOfBounds.add(
-            this.__asteroid_out_of_bounds, this);
+            this.__object_out_of_bounds, this, 0, '__non_player_objects');
 
         asteroid.uuid = this.__get_uuid();
 
@@ -384,7 +384,7 @@ Game.prototype =
         star.parallax_multiplier = size / 4;
         star.checkWorldBounds = true;
         star.events.onOutOfBounds.add(
-            this.__star_out_of_bounds, this);
+            this.__object_out_of_bounds, this, 0, '__stars');
         star.uuid = this.__get_uuid();
         this.__stars.push(star);
     },
@@ -396,38 +396,21 @@ Game.prototype =
         return this.__uuid;
     },
 
-    __asteroid_out_of_bounds : function(asteroid)
+    __object_out_of_bounds : function(object, object_array_string)
     {
-        if (asteroid.position.x > CONSTS.SCREEN_DIMENSIONS[1])
+        if (object.position.x > CONSTS.SCREEN_DIMENSIONS[0])
         {
             return;
         }
-        asteroid.destroy();
-        this.__non_player_objects =
-            this.__non_player_objects.filter(function(item)
+        object.destroy();
+        this[object_array_string] =
+            this[object_array_string].filter(function(item)
             {
                 if (typeof item.uuid ==='undefined')
                 {
                     return true;
                 }
-                return item.uuid != asteroid.uuid;
-            });
-    },
-    __star_out_of_bounds : function(star)
-    {
-        if (star.position.x > CONSTS.SCREEN_DIMENSIONS[1])
-        {
-            return;
-        }
-        star.destroy();
-        this.__stars =
-            this.__stars.filter(function(item)
-            {
-                if (typeof item.uuid ==='undefined')
-                {
-                    return true;
-                }
-                return item.uuid != star.uuid;
+                return item.uuid != object.uuid;
             });
     },
 };
