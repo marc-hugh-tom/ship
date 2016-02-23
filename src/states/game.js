@@ -62,7 +62,8 @@ Game.prototype =
         last_asteroid_spawn_distance: 0,
         // Distance travelled between star spawns
         star_spawn_distance: 70,
-        last_star_spawn_distance: 0
+        last_star_spawn_distance: 0,
+        initial_star_density_per_pixel: 0.0003
     },
 
     __origin : new Phaser.Point(0, 0),
@@ -134,6 +135,12 @@ Game.prototype =
             bmd.context.arc(5, 5, size, 0, 2 * Math.PI);
             bmd.context.fill();
             this.game.cache.addBitmapData('star' + size, bmd);
+        }
+        
+        for (i = 0; i < (CONSTS.SCREEN_DIMENSIONS[0] *
+            CONSTS.SCREEN_DIMENSIONS[1] *
+            this.__parameters.initial_star_density_per_pixel); i++) {
+            this.__spawn_star(Rand.range(0, CONSTS.SCREEN_DIMENSIONS[0]));
         }
     },
 
@@ -359,11 +366,15 @@ Game.prototype =
         this.__non_player_objects.push(asteroid);
     },
 
-    __spawn_star : function()
+    __spawn_star : function(star_x)
     {
+        if (star_x == undefined)
+        {
+            star_x = CONSTS.SCREEN_DIMENSIONS[0] + 50;
+        }
         var size = Rand.int_range(1, 4);
         var star = this.game.add.sprite(
-            CONSTS.SCREEN_DIMENSIONS[0] + 50,
+            star_x,
             Rand.range(4, CONSTS.SCREEN_DIMENSIONS[1] - 5),
             this.game.cache.getBitmapData('star' + size)
         );
