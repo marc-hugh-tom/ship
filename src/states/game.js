@@ -70,6 +70,7 @@ Game.prototype =
     init : function()
     {
         this.__sprites = {};
+        this.__layers = {};
         this.__non_player_objects.length = 0;
         this.__stars.length = 0;
         this.__parameters.last_asteroid_spawn_distance = 0;
@@ -106,6 +107,10 @@ Game.prototype =
     {
         this.game.physics.startSystem(Phaser.Physics.Arcade);
 
+        this.__layers.background = this.game.add.group();
+        this.__layers.enemies = this.game.add.group();
+        this.__layers.ship_and_blackhole = this.game.add.group();
+        
         this.__sprites.ship = this.__createShip();
         this.__sprites.blackHole = this.__createBlackHole();
         this.__non_player_objects.push(this.__sprites.blackHole);
@@ -136,6 +141,7 @@ Game.prototype =
     {
         var ship = this.game.add.sprite(
             100, 200, this.__assets.ship.name);
+        this.__layers.ship_and_blackhole.add(ship);
         ship.anchor.set(0.5, 0.5);
         this.game.physics.arcade.enable(ship);
         ship.body.setSize(60, 60, 0, 0);
@@ -152,6 +158,7 @@ Game.prototype =
     {
         var blackHole = this.game.add.sprite(
             200, 300, this.__assets.blackHole.name);
+        this.__layers.ship_and_blackhole.add(blackHole);
         blackHole.anchor.set(0.5, 0.5);
         this.game.physics.arcade.enable(blackHole);
         blackHole.body.mass = this.__parameters.blackHole_mass;
@@ -332,7 +339,7 @@ Game.prototype =
             Rand.range(100, CONSTS.SCREEN_DIMENSIONS[1] - 100),
             asteroid_asset.name
         );
-
+        this.__layers.enemies.add(asteroid);
         this.game.physics.arcade.enable(asteroid);
 
         asteroid.body.angularVelocity = Rand.range(-20, 20);
@@ -360,6 +367,7 @@ Game.prototype =
             Rand.range(4, CONSTS.SCREEN_DIMENSIONS[1] - 5),
             this.game.cache.getBitmapData('star' + size)
         );
+        this.__layers.background.add(star);
         star.anchor.set(0.5, 0.5);
         star.hitCircles = [{x: 0, y: 0, r: 0}];
         star.parallax_multiplier = size / 4;
