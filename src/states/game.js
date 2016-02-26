@@ -128,7 +128,7 @@ Game.prototype =
             this.debug_graphics = this.game.add.graphics();
         }
         
-        for (size = 1; size < 4; size++) { 
+        for (var size = 1; size < 4; size++) { 
             var bmd = this.game.add.bitmapData(10, 10);
             bmd.context.beginPath();
             bmd.context.fillStyle = 'white';
