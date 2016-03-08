@@ -40,6 +40,8 @@ Game.prototype =
 
     __non_player_objects : [],
 
+    __stars : [],
+
     __asteroids : [],
 
     __parameters :
@@ -57,7 +59,11 @@ Game.prototype =
 
         // Distance travelled between asteroid spawns
         asteroid_spawn_distance: 100,
-        last_asteroid_spawn_distance: 0
+        last_asteroid_spawn_distance: 0,
+        // Distance travelled between star spawns
+        star_spawn_distance: 70,
+        last_star_spawn_distance: 0,
+        initial_star_density_per_pixel: 0.0003
     },
 
     __origin : new Phaser.Point(0, 0),
@@ -65,7 +71,9 @@ Game.prototype =
     init : function()
     {
         this.__sprites = {};
+        this.__layers = {};
         this.__non_player_objects.length = 0;
+        this.__stars.length = 0;
         this.__parameters.last_asteroid_spawn_distance = 0;
         this.__asteroids.length = 0;
     },
@@ -100,6 +108,10 @@ Game.prototype =
     {
         this.game.physics.startSystem(Phaser.Physics.Arcade);
 
+        this.__layers.background = this.game.add.group();
+        this.__layers.enemies = this.game.add.group();
+        this.__layers.ship_and_blackhole = this.game.add.group();
+        
         this.__sprites.ship = this.__createShip();
         this.__sprites.blackHole = this.__createBlackHole();
         this.__non_player_objects.push(this.__sprites.blackHole);
@@ -115,12 +127,28 @@ Game.prototype =
         {
             this.debug_graphics = this.game.add.graphics();
         }
+        
+        for (var size = 1; size < 4; size++) { 
+            var bmd = this.game.add.bitmapData(10, 10);
+            bmd.context.beginPath();
+            bmd.context.fillStyle = 'white';
+            bmd.context.arc(5, 5, size, 0, 2 * Math.PI);
+            bmd.context.fill();
+            this.game.cache.addBitmapData('star' + size, bmd);
+        }
+        
+        for (i = 0; i < (CONSTS.SCREEN_DIMENSIONS[0] *
+            CONSTS.SCREEN_DIMENSIONS[1] *
+            this.__parameters.initial_star_density_per_pixel); i++) {
+            this.__spawn_star(Rand.range(0, CONSTS.SCREEN_DIMENSIONS[0]));
+        }
     },
 
     __createShip : function()
     {
         var ship = this.game.add.sprite(
             100, 200, this.__assets.ship.name);
+        this.__layers.ship_and_blackhole.add(ship);
         ship.anchor.set(0.5, 0.5);
         this.game.physics.arcade.enable(ship);
         ship.body.setSize(60, 60, 0, 0);
@@ -137,6 +165,7 @@ Game.prototype =
     {
         var blackHole = this.game.add.sprite(
             200, 300, this.__assets.blackHole.name);
+        this.__layers.ship_and_blackhole.add(blackHole);
         blackHole.anchor.set(0.5, 0.5);
         this.game.physics.arcade.enable(blackHole);
         blackHole.body.mass = this.__parameters.blackHole_mass;
@@ -185,6 +214,10 @@ Game.prototype =
                 npo_sprite.body.position.x -= shipXPositionDiff;
             });
 
+            this.__stars.forEach(function(star) {
+                star.x -= shipXPositionDiff * star.parallax_multiplier;
+            });
+
             this.offset_x += shipXPositionDiff;
 
             ship.body.position.setTo(ship.body.prev.x,
@@ -192,7 +225,7 @@ Game.prototype =
         }
 
         this.__update_score();
-        this.__update_asteroid_spawn();
+        this.__update_spawning();
 
         this.__checkCollisions();
 
@@ -231,7 +264,7 @@ Game.prototype =
         this.scoreText.setText(this.maxScore.toFixed(0))
     },
 
-    __update_asteroid_spawn : function()
+    __update_spawning : function()
     {
         var distance_travelled = this.offset_x;
         var difference = distance_travelled -
@@ -240,6 +273,12 @@ Game.prototype =
         {
             this.__spawn_asteroid();
             this.__parameters.last_asteroid_spawn_distance =
+                distance_travelled;
+        }
+        if ( difference > this.__parameters.star_spawn_distance )
+        {
+            this.__spawn_star();
+            this.__parameters.last_star_spawn_distance =
                 distance_travelled;
         }
     },
@@ -307,7 +346,7 @@ Game.prototype =
             Rand.range(100, CONSTS.SCREEN_DIMENSIONS[1] - 100),
             asteroid_asset.name
         );
-
+        this.__layers.enemies.add(asteroid);
         this.game.physics.arcade.enable(asteroid);
 
         asteroid.body.angularVelocity = Rand.range(-20, 20);
@@ -319,12 +358,35 @@ Game.prototype =
 
         asteroid.checkWorldBounds = true;
         asteroid.events.onOutOfBounds.add(
-            this.__asteroid_out_of_bounds, this);
+            this.__object_out_of_bounds, this, 0, '__non_player_objects');
 
         asteroid.uuid = this.__get_uuid();
 
         asteroid.hitCircles = [{x: 0, y: 0, r: 10}];
         this.__non_player_objects.push(asteroid);
+    },
+
+    __spawn_star : function(star_x)
+    {
+        if (star_x == undefined)
+        {
+            star_x = CONSTS.SCREEN_DIMENSIONS[0] + 50;
+        }
+        var size = Rand.int_range(1, 4);
+        var star = this.game.add.sprite(
+            star_x,
+            Rand.range(4, CONSTS.SCREEN_DIMENSIONS[1] - 5),
+            this.game.cache.getBitmapData('star' + size)
+        );
+        this.__layers.background.add(star);
+        star.anchor.set(0.5, 0.5);
+        star.hitCircles = [{x: 0, y: 0, r: 0}];
+        star.parallax_multiplier = size / 4;
+        star.checkWorldBounds = true;
+        star.events.onOutOfBounds.add(
+            this.__object_out_of_bounds, this, 0, '__stars');
+        star.uuid = this.__get_uuid();
+        this.__stars.push(star);
     },
 
     __uuid : 0,
@@ -334,23 +396,21 @@ Game.prototype =
         return this.__uuid;
     },
 
-    __asteroid_out_of_bounds : function(asteroid)
+    __object_out_of_bounds : function(object, object_array_string)
     {
-        if (asteroid.position.x > CONSTS.SCREEN_DIMENSIONS[1])
+        if (object.position.x > CONSTS.SCREEN_DIMENSIONS[0])
         {
             return;
         }
-
-        asteroid.destroy();
-        this.__non_player_objects =
-            this.__non_player_objects.filter(function(item)
+        object.destroy();
+        this[object_array_string] =
+            this[object_array_string].filter(function(item)
             {
                 if (typeof item.uuid ==='undefined')
                 {
                     return true;
                 }
-
-                return item.uuid != asteroid.uuid;
+                return item.uuid != object.uuid;
             });
     },
 };
