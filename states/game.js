@@ -54,7 +54,7 @@ Game.prototype =
             y: 300
         },
         score_constant: 0.05,
-        score_font: CONSTS.ASSETS_URL_PREFIX + '/RobotoMono-Regular',
+        score_font: 'RobotoMono-Regular',
         render_body_debug_info: false,
 
         // Distance travelled between asteroid spawns
