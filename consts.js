@@ -12,5 +12,5 @@ CONSTS =
 
     SCREEN_DIMENSIONS : [ 800, 600 ],
 
-    ASSETS_URL_PREFIX : "../../assets"
+    ASSETS_URL_PREFIX : "assets"
 };
