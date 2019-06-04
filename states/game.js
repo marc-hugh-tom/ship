@@ -54,7 +54,7 @@ Game.prototype =
             y: 300
         },
         score_constant: 0.05,
-        score_font: 'RobotoMono-Regular',
+        score_font: CONSTS.ASSETS_URL_PREFIX + '/RobotoMono-Regular',
         render_body_debug_info: false,
 
         // Distance travelled between asteroid spawns
@@ -111,7 +111,7 @@ Game.prototype =
         this.__layers.background = this.game.add.group();
         this.__layers.enemies = this.game.add.group();
         this.__layers.ship_and_blackhole = this.game.add.group();
-        
+
         this.__sprites.ship = this.__createShip();
         this.__sprites.blackHole = this.__createBlackHole();
         this.__non_player_objects.push(this.__sprites.blackHole);
@@ -127,8 +127,8 @@ Game.prototype =
         {
             this.debug_graphics = this.game.add.graphics();
         }
-        
-        for (var size = 1; size < 4; size++) { 
+
+        for (var size = 1; size < 4; size++) {
             var bmd = this.game.add.bitmapData(10, 10);
             bmd.context.beginPath();
             bmd.context.fillStyle = 'white';
@@ -136,7 +136,7 @@ Game.prototype =
             bmd.context.fill();
             this.game.cache.addBitmapData('star' + size, bmd);
         }
-        
+
         for (i = 0; i < (CONSTS.SCREEN_DIMENSIONS[0] *
             CONSTS.SCREEN_DIMENSIONS[1] *
             this.__parameters.initial_star_density_per_pixel); i++) {
